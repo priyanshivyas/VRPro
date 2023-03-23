@@ -6,7 +6,7 @@ def solve_vrp(customer_locations, num_vehicles):
     """
     Solve the Vehicle Routing Problem using the nearest neighbor algorithm
     """
-    num_customers = len(customer_locations)
+    num_customers = len(customer_locations) - 1 # Substract 1 from the length.
     visited_customers = set()
     vehicle_routes = [[] for _ in range(num_vehicles)]
 
