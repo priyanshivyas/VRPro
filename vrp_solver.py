@@ -11,6 +11,10 @@ class VRPSolver:
         self.num_vehicles = num_vehicles
         self.vehicle_capacity = vehicle_capacity
         self.distance_matrix = squareform(pdist(self.customer_locations))
+        if customer_demands is None:
+            self.customer_demands = np.random.randint(1, 10, size=self.num_customers)
+        else:
+            self.customer_demands = customer_demands
 
     def solve(self):
         unvisited_customers = set(range(1, self.num_customers))

@@ -19,19 +19,10 @@ def main():
         np.random.seed(args.random_seed)
         customer_locations = np.random.rand(args.num_customers, 2)
         customer_demands = np.random.randint(1, 10, size=args.num_customers)
-    # np.random.seed(args.random_seed)
-    # # customer_locations = np.random.rand(args.num_customers, 2)
-    # customer_demands = np.random.randint(1, 10, size=args.num_customers)
 
     # Solve the VRP instance
     vrp_solver = VRPSolver(num_customers=args.num_customers, customer_locations=customer_locations, customer_demands=customer_demands, num_vehicles=args.num_vehicles, vehicle_capacity=args.vehicle_capacity)
     routes, route_distances = vrp_solver.solve()
-
-    # Print the solution
-    # print_solution(routes, route_distances)
-
-    # vrp_solver = VRPSolver(num_customers=args.num_customers, customer_locations=customer_locations, num_vehicles=args.num_vehicles)
-    # routes, route_distances = vrp_solver.solve()
 
     for i, route in enumerate(routes):
         print(f'Route {i + 1}: {route}, Distance: {route_distances[i]}')
