@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
+from vrp_utils import nearest_neighbor
 
-
-class VRP:
+class VRPSolver:
     def __init__(self, num_customers, customer_locations, num_vehicles):
         self.num_customers = num_customers
         self.customer_locations = customer_locations
@@ -10,42 +10,39 @@ class VRP:
         self.distance_matrix = squareform(pdist(self.customer_locations))
 
     def solve(self):
-            routes = []
-            route_distances = []
+        routes = []
+        route_distances = []
 
-            vehicle_capacities = np.ones(self.num_vehicles) * 10  # default capacity of 10
+        vehicle_capacities = np.ones(self.num_vehicles) * 10  # default capacity of 10
 
-            for v in range(self.num_vehicles):
-                route = []
-                route_distance = 0
+        for v in range(self.num_vehicles):
+            route = []
+            route_distance = 0
 
-                curr_customer = 0  # start at the depot
+            curr_customer = 0  # start at the depot
 
-                while True:
-                    # Find the nearest customer
-                    nearest_customer = np.argmin(self.distance_matrix[curr_customer][1:] + np.where(vehicle_capacities[v] < 1e-8, np.inf, 0))
+            while True:
+                # Find the nearest customer
+                nearest_customer = nearest_neighbor(curr_customer, self.distance_matrix, vehicle_capacities[v])
 
-                    # If no customers are reachable, we're done with this route
-                    if np.isinf(self.distance_matrix[curr_customer][nearest_customer + 1]):
-                        break
+                # If no customers are reachable, we're done with this route
+                if np.isinf(self.distance_matrix[curr_customer][nearest_customer]):
+                    break
 
-                    # Add the customer to the route
-                    route.append(nearest_customer)
-                    route_distance += self.distance_matrix[curr_customer][nearest_customer + 1]
-                    vehicle_capacities[v] -= 1
+                # Add the customer to the route
+                route.append(nearest_customer)
+                route_distance += self.distance_matrix[curr_customer][nearest_customer]
+                vehicle_capacities[v] -= 1
 
-                    # Move to the new current customer
-                    curr_customer = nearest_customer + 1
+                # Move to the new current customer
+                curr_customer = nearest_customer+1
 
-                # Add the depot to the end of the route
-                route.append(0)
-                route_distance += self.distance_matrix[curr_customer][0]
+            # Add the depot to the end of the route
+            route.append(0)
+            route_distance += self.distance_matrix[curr_customer][0]
 
-                # Add the completed route and its distance to the overall solution
-                routes.append(route)
-                route_distances.append(route_distance)
+            # Add the completed route and its distance to the overall solution
+            routes.append(route)
+            route_distances.append(route_distance)
 
-                # Set the current customer to the depot for the next iteration
-                curr_customer = 0
-
-            return routes, route_distances
+        return routes, route_distances

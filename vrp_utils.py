@@ -1,4 +1,17 @@
 import numpy as np
+import csv
+
+def load_data(filename):
+    """
+    Load customer locations from a CSV file
+    """
+    with open(filename, 'r') as f:
+        reader = csv.reader(f)
+        next(reader)  # skip header row
+        customer_locations = []
+        for row in reader:
+            customer_locations.append([float(row[0]), float(row[1])])
+        return np.array(customer_locations)
 
 def calculate_distance(x1, y1, x2, y2):
     """
@@ -20,4 +33,9 @@ def find_nearest_customer(location, customer_locations, visited_customers):
                 shortest_distance = distance
                 nearest_customer = i
     return nearest_customer
+
+def nearest_neighbor(curr_customer, distance_matrix, capacity):
+    nearest_customer = np.argmin(distance_matrix[curr_customer][1:] + np.where(capacity < 1e-8, np.inf, 0)) + 1
+    return nearest_customer
+
 
