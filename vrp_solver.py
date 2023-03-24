@@ -22,20 +22,22 @@ class VRPSolver:
             curr_customer = 0  # start at the depot
 
             while True:
-                # Find the nearest customer
-                nearest_customer = nearest_neighbor(curr_customer, self.distance_matrix, vehicle_capacities[v])
+                # Find the nearest customer that can be serviced by the vehicle
+                mask = (vehicle_capacities[v] > 0)
+                dist_with_capacity = self.distance_matrix[curr_customer][1:] + np.where(mask, 0, np.inf)
+                nearest_customer = np.argmin(dist_with_capacity)
 
                 # If no customers are reachable, we're done with this route
-                if np.isinf(self.distance_matrix[curr_customer][nearest_customer]):
+                if np.isinf(dist_with_capacity[nearest_customer]):
                     break
 
                 # Add the customer to the route
                 route.append(nearest_customer)
-                route_distance += self.distance_matrix[curr_customer][nearest_customer]
+                route_distance += self.distance_matrix[curr_customer][nearest_customer + 1]
                 vehicle_capacities[v] -= 1
 
                 # Move to the new current customer
-                curr_customer = nearest_customer+1
+                curr_customer = nearest_customer + 1
 
             # Add the depot to the end of the route
             route.append(0)
