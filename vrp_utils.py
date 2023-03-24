@@ -3,15 +3,17 @@ import csv
 
 def load_data(filename):
     """
-    Load customer locations from a CSV file
+    Load customer locations and demands from a CSV file
     """
     with open(filename, 'r') as f:
         reader = csv.reader(f)
         next(reader)  # skip header row
         customer_locations = []
+        customer_demands = []
         for row in reader:
             customer_locations.append([float(row[0]), float(row[1])])
-        return np.array(customer_locations)
+            customer_demands.append(int(row[2]))
+        return np.array(customer_locations), np.array(customer_demands)
 
 def calculate_distance(x1, y1, x2, y2):
     """

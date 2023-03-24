@@ -3,9 +3,11 @@ from scipy.spatial.distance import pdist, squareform
 from vrp_utils import nearest_neighbor
 
 class VRPSolver:
-    def __init__(self, num_customers, customer_locations, num_vehicles):
+
+    def __init__(self, num_customers, customer_locations, customer_demands, num_vehicles):
         self.num_customers = num_customers
         self.customer_locations = customer_locations
+        self.customer_demands = customer_demands
         self.num_vehicles = num_vehicles
         self.distance_matrix = squareform(pdist(self.customer_locations))
 
@@ -20,21 +22,20 @@ class VRPSolver:
             route_distance = 0
 
             curr_customer = 0  # start at the depot
+            vehicle_capacity = vehicle_capacities[v]
 
             while True:
-                # Find the nearest customer that can be serviced by the vehicle
-                mask = (vehicle_capacities[v] > 0)
-                dist_with_capacity = self.distance_matrix[curr_customer][1:] + np.where(mask, 0, np.inf)
-                nearest_customer = np.argmin(dist_with_capacity)
-
-                # If no customers are reachable, we're done with this route
-                if np.isinf(dist_with_capacity[nearest_customer]):
+                # Find the nearest customer
+                distances = self.distance_matrix[curr_customer][1:]
+                feasible_customers = np.where(distances <= vehicle_capacity)[0]
+                if len(feasible_customers) == 0:
                     break
+                nearest_customer = feasible_customers[np.argmin(distances[feasible_customers])]
 
                 # Add the customer to the route
                 route.append(nearest_customer)
                 route_distance += self.distance_matrix[curr_customer][nearest_customer + 1]
-                vehicle_capacities[v] -= 1
+                vehicle_capacity -= self.customer_demands[nearest_customer]
 
                 # Move to the new current customer
                 curr_customer = nearest_customer + 1
