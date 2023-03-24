@@ -36,8 +36,11 @@ def find_nearest_customer(location, customer_locations, visited_customers):
                 nearest_customer = i
     return nearest_customer
 
-def nearest_neighbor(curr_customer, distance_matrix, capacity):
-    nearest_customer = np.argmin(distance_matrix[curr_customer][1:] + np.where(capacity < 1e-8, np.inf, 0)) + 1
-    return nearest_customer
+def nearest_neighbor(curr_location, distance_matrix, remaining_capacity, unvisited_customers):
+    valid_customers = [i for i in unvisited_customers if remaining_capacity >= customer_demands[i]]
+    if not valid_customers:
+        return None
+    distances = distance_matrix[curr_location][valid_customers]
+    return valid_customers[np.argmin(distances)]
 
 
