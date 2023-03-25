@@ -23,7 +23,7 @@ class VRPSolver:
             curr_location = 0
             remaining_capacity = vehicle_capacities[v]
             while unvisited_customers:
-                nearest_customer = nearest_neighbor(curr_location, self.distance_matrix, remaining_capacity)
+                nearest_customer = nearest_neighbor(curr_location, self.distance_matrix, remaining_capacity, unvisited_customers)
                 if nearest_customer is None:
                     break
                 remaining_capacity -= self.customer_demands[nearest_customer]

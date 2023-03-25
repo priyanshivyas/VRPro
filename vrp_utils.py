@@ -1,6 +1,7 @@
 import numpy as np
 import csv
 
+customer_demands = []
 def load_data(filename):
     """
     Load customer locations and demands from a CSV file
@@ -9,7 +10,6 @@ def load_data(filename):
         reader = csv.reader(f)
         next(reader)  # skip header row
         customer_locations = []
-        customer_demands = []
         for row in reader:
             customer_locations.append([float(row[0]), float(row[1])])
             customer_demands.append(int(row[2]))
